@@ -5,9 +5,16 @@ interface GlassCardProps {
   className?: string;
   neonColor?: 'blue' | 'purple' | 'violet' | 'pink';
   hover3d?: boolean;
+  onClick?: () => void; // 1. Add the optional onClick prop to the interface
 }
 
-export function GlassCard({ children, className = '', neonColor = 'blue', hover3d = false }: GlassCardProps) {
+export function GlassCard({ 
+  children, 
+  className = '', 
+  neonColor = 'blue', 
+  hover3d = false,
+  onClick // 2. Destructure the onClick prop here
+}: GlassCardProps) {
   const neonColors = {
     blue: 'shadow-[0_0_20px_rgba(0,217,255,0.3)] border-[#00D9FF]/30 hover:shadow-[0_0_30px_rgba(0,217,255,0.5)]',
     purple: 'shadow-[0_0_20px_rgba(138,43,226,0.3)] border-purple-500/30 hover:shadow-[0_0_30px_rgba(138,43,226,0.5)]',
@@ -19,9 +26,11 @@ export function GlassCard({ children, className = '', neonColor = 'blue', hover3
 
   return (
     <div
+      onClick={onClick} // 3. Attach the click handler to the div
       className={`
         backdrop-blur-md bg-black/40 border rounded-2xl
         transition-all duration-500 ease-out
+        ${onClick ? 'cursor-pointer active:scale-95' : ''} 
         ${neonColors[neonColor]}
         ${transform3d}
         ${className}

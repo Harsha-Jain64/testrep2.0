@@ -1,254 +1,203 @@
-import { useState, useEffect } from 'react';
-import { Star, Smile, Meh, Frown, ThumbsUp, Heart } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
+import { useState } from 'react';
+import { Star, Smile, Meh, Frown, Heart, Send, CheckCircle2, Globe, MessageSquare, UserCircle } from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
-import { NeonButton } from '../ui/NeonButton';
 import { GradientText } from '../ui/GradientText';
 
+const CATEGORIES = [
+  { id: 'general', title: 'General Platform', category: 'Global' },
+  { id: '1', title: 'Developer Summit 2024', category: 'Conference' },
+  { id: '2', title: 'Open Source Workshop', category: 'Education' },
+];
+
 export function FeedbackSystem() {
-  const [events, setEvents] = useState<any[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string>('');
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [emoji, setEmoji] = useState('');
   const [comment, setComment] = useState('');
-  const [suggestions, setSuggestions] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
 
-  const emojis = [
-    { id: 'love', icon: Heart, label: 'Loved it', color: 'text-pink-500' },
-    { id: 'happy', icon: Smile, label: 'Great', color: 'text-[#00D9FF]' },
-    { id: 'okay', icon: Meh, label: 'Okay', color: 'text-yellow-500' },
-    { id: 'sad', icon: Frown, label: 'Not good', color: 'text-red-500' },
+  // --- LIVE FEED STATE ---
+  const [feed, setFeed] = useState([
+    { id: 'f1', name: 'Anonymous', event: 'General', rating: 5, comment: 'The new UI is incredibly smooth. Loving the experience so far!', date: '2h ago' },
+    { id: 'f2', name: 'Ishita G.', event: 'Dev Summit', rating: 4, comment: 'Great speakers, though the Q&A session could have been longer.', date: '5h ago' },
+    { id: 'f3', name: 'Rohan M.', event: 'Workshop', rating: 5, comment: 'Highly interactive sessions.', date: '1d ago' },
+  ]);
+
+  const reactions = [
+    { id: 'sad', icon: Frown, label: 'Poor' },
+    { id: 'okay', icon: Meh, label: 'Average' },
+    { id: 'happy', icon: Smile, label: 'Good' },
+    { id: 'love', icon: Heart, label: 'Excellent' },
   ];
 
-  useEffect(() => {
-    loadEvents();
-  }, [user]);
+  const handleDispatch = () => {
+    if (rating === 0 || !selectedEvent) return;
 
-  const loadEvents = async () => {
-    if (!user) return;
+    // 1. Create the new feedback object
+    const eventName = CATEGORIES.find(c => c.id === selectedEvent)?.title || 'General';
+    const newEntry = {
+      id: Date.now().toString(),
+      name: isAnonymous ? 'Anonymous' : 'You', // Shows 'You' for the current session
+      event: eventName.replace('Developer ', '').replace('Platform', ''), // Shorten for UI
+      rating: rating,
+      comment: comment || "No comment provided.",
+      date: 'Just now'
+    };
 
-    const { data } = await supabase
-      .from('event_registrations')
-      .select('event_id, events(id, title, event_date)')
-      .eq('user_id', user.id)
-      .eq('feedback_submitted', false)
-      .order('events(event_date)', { ascending: false });
-
-    if (data) {
-      setEvents(data.map(r => r.events).filter(Boolean));
-    }
+    // 2. Add to feed and show success
+    setFeed([newEntry, ...feed]);
+    setSubmitted(true);
   };
 
-  const handleSubmit = async () => {
-    if (!user || !selectedEvent || rating === 0) return;
-
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('feedback')
-        .insert({
-          event_id: selectedEvent,
-          user_id: user.id,
-          rating,
-          emoji_reaction: emoji,
-          comment,
-          suggestions,
-          is_anonymous: isAnonymous,
-          sentiment_score: rating / 5,
-        });
-
-      if (!error) {
-        await supabase
-          .from('event_registrations')
-          .update({ feedback_submitted: true })
-          .eq('user_id', user.id)
-          .eq('event_id', selectedEvent);
-
-        setSubmitted(true);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+  const resetForm = () => {
+    setSubmitted(false);
+    setRating(0);
+    setEmoji('');
+    setComment('');
+    setSelectedEvent('');
   };
-
-  if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <GlassCard className="p-12 text-center max-w-2xl mx-auto">
-          <GradientText className="text-3xl mb-4">Share Your Feedback</GradientText>
-          <p className="text-gray-400">Please sign in to provide feedback</p>
-        </GlassCard>
-      </div>
-    );
-  }
 
   if (submitted) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <GlassCard className="p-12 text-center max-w-2xl mx-auto" neonColor="blue">
-          <ThumbsUp size={64} className="mx-auto text-[#00D9FF] mb-6" />
-          <GradientText className="text-3xl mb-4">Thank You!</GradientText>
-          <p className="text-gray-400 mb-6">
-            Your feedback helps us create better events for everyone
-          </p>
-          <NeonButton onClick={() => {
-            setSubmitted(false);
-            setRating(0);
-            setEmoji('');
-            setComment('');
-            setSuggestions('');
-            setSelectedEvent('');
-            loadEvents();
-          }}>
-            Submit Another Feedback
-          </NeonButton>
+      <div className="container mx-auto px-4 py-24 text-center">
+        <GlassCard className="max-w-md mx-auto p-12 border-cyan-500/20" neonColor="blue">
+          <CheckCircle2 size={50} className="mx-auto text-cyan-400 mb-6" />
+          <h2 className="text-3xl font-bold text-white mb-2">Dispatch Successful</h2>
+          <p className="text-gray-400 mb-8 text-sm">Your feedback has been added to the community pulse.</p>
+          <button onClick={resetForm} className="w-full py-3 bg-white text-black font-bold rounded-lg hover:bg-cyan-400 transition-colors uppercase text-xs tracking-widest">
+            New Submission
+          </button>
         </GlassCard>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
-      <div className="text-center mb-12">
-        <GradientText className="text-5xl mb-4">Event Feedback</GradientText>
-        <p className="text-gray-400 text-lg">Help us improve by sharing your experience</p>
+    <div className="container mx-auto px-4 py-16 max-w-6xl">
+      <div className="mb-12">
+        <h1 className="text-4xl font-bold text-white mb-2 tracking-tight">Community <GradientText>Insights</GradientText></h1>
+        <p className="text-gray-500 text-sm tracking-widest uppercase font-mono text-[10px]">System Status // Public Feedback Loop Active</p>
       </div>
 
-      <GlassCard className="p-8" neonColor="blue">
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-300 mb-3">
-              Select Event
-            </label>
-            <select
-              value={selectedEvent}
-              onChange={(e) => setSelectedEvent(e.target.value)}
-              className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        {/* Sidebar */}
+        <div className="lg:col-span-4 space-y-3">
+          <h3 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.3em] mb-4 ml-1">Select Channel</h3>
+          {CATEGORIES.map(event => (
+            <button
+              key={event.id}
+              onClick={() => setSelectedEvent(event.id)}
+              className={`w-full p-5 rounded-xl border transition-all text-left ${
+                selectedEvent === event.id ? 'bg-white/10 border-cyan-500/50' : 'bg-white/[0.02] border-white/5 hover:border-white/10'
+              }`}
             >
-              <option value="">Choose an event...</option>
-              {events.map(event => (
-                <option key={event.id} value={event.id}>
-                  {event.title}
-                </option>
-              ))}
-            </select>
-          </div>
+              <p className={`text-[9px] uppercase font-bold mb-1 ${selectedEvent === event.id ? 'text-cyan-400' : 'text-gray-600'}`}>
+                {event.category}
+              </p>
+              <p className="font-semibold text-white tracking-tight">{event.title}</p>
+            </button>
+          ))}
+        </div>
 
-          {selectedEvent && (
-            <>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Rate Your Experience
-                </label>
-                <div className="flex gap-2 justify-center">
+        {/* Form */}
+        <div className="lg:col-span-8">
+          <GlassCard className="p-8 border-white/5" neonColor="blue">
+            <div className={`space-y-10 ${!selectedEvent ? 'opacity-20 pointer-events-none' : 'opacity-100'} transition-opacity`}>
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                  <h4 className="text-white font-semibold">Experience Rating</h4>
+                  <p className="text-gray-500 text-xs italic">Awaiting your calibration...</p>
+                </div>
+                <div className="flex gap-1">
                   {[1, 2, 3, 4, 5].map(star => (
-                    <button
-                      key={star}
-                      onMouseEnter={() => setHoverRating(star)}
-                      onMouseLeave={() => setHoverRating(0)}
-                      onClick={() => setRating(star)}
-                      className="transition-transform hover:scale-110"
-                    >
-                      <Star
-                        size={40}
-                        className={`
-                          ${(hoverRating || rating) >= star
-                            ? 'fill-[#00D9FF] text-[#00D9FF]'
-                            : 'text-gray-600'
-                          }
-                        `}
-                      />
+                    <button key={star} onMouseEnter={() => setHoverRating(star)} onMouseLeave={() => setHoverRating(0)} onClick={() => setRating(star)}>
+                      <Star size={28} className={`${(hoverRating || rating) >= star ? 'fill-cyan-400 text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]' : 'text-gray-800'}`} />
                     </button>
                   ))}
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  How did you feel?
-                </label>
-                <div className="grid grid-cols-4 gap-3">
-                  {emojis.map(e => {
-                    const Icon = e.icon;
-                    return (
-                      <button
-                        key={e.id}
-                        onClick={() => setEmoji(e.id)}
-                        className={`
-                          p-4 rounded-xl border-2 transition-all
-                          ${emoji === e.id
-                            ? 'border-[#00D9FF] bg-[#00D9FF]/10 shadow-[0_0_15px_rgba(0,217,255,0.3)]'
-                            : 'border-[#00D9FF]/30 hover:border-[#00D9FF]/50'
-                          }
-                        `}
-                      >
-                        <Icon size={32} className={`mx-auto mb-2 ${e.color}`} />
-                        <p className="text-xs text-gray-400">{e.label}</p>
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {reactions.map(r => (
+                  <button
+                    key={r.id}
+                    onClick={() => setEmoji(r.id)}
+                    className={`p-3 rounded-xl border transition-all flex items-center gap-3 ${
+                      emoji === r.id ? 'bg-cyan-500/10 border-cyan-500/40 text-white' : 'border-white/5 text-gray-600'
+                    }`}
+                  >
+                    <r.icon size={18} className={emoji === r.id ? 'text-cyan-400' : ''} />
+                    <span className="text-[10px] uppercase font-bold tracking-widest">{r.label}</span>
+                  </button>
+                ))}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Comments (Optional)
-                </label>
+              <div className="space-y-4">
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                  placeholder="Share your thoughts..."
+                  placeholder="Additional insights (Optional)..."
+                  className="w-full bg-black/40 border border-white/5 rounded-xl p-5 text-white text-sm focus:border-cyan-500/50 outline-none min-h-[120px] transition-all"
                 />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Suggestions for Improvement
-                </label>
-                <textarea
-                  value={suggestions}
-                  onChange={(e) => setSuggestions(e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                  placeholder="How can we make it better?"
-                />
-              </div>
+                <div className="flex items-center justify-between">
+                  <button onClick={() => setIsAnonymous(!isAnonymous)} className="flex items-center gap-2 group">
+                    <div className={`w-4 h-4 rounded border transition-all ${isAnonymous ? 'bg-cyan-500 border-cyan-500' : 'border-white/20'}`} />
+                    <span className="text-[10px] font-bold uppercase text-gray-500 tracking-widest">Ghost Mode</span>
+                  </button>
 
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="anonymous"
-                  checked={isAnonymous}
-                  onChange={(e) => setIsAnonymous(e.target.checked)}
-                  className="w-5 h-5 rounded bg-black/50 border-[#00D9FF]/30 text-[#00D9FF] focus:ring-[#00D9FF]"
-                />
-                <label htmlFor="anonymous" className="text-gray-300">
-                  Submit anonymously
-                </label>
+                  <button
+                    disabled={rating === 0}
+                    onClick={handleDispatch}
+                    className="px-10 py-4 bg-white text-black rounded-lg font-bold uppercase text-[10px] tracking-[0.2em] hover:bg-cyan-400 disabled:opacity-20 transition-all shadow-lg"
+                  >
+                    Dispatch
+                  </button>
+                </div>
               </div>
-
-              <NeonButton
-                onClick={handleSubmit}
-                disabled={loading || rating === 0}
-                className="w-full"
-                size="lg"
-              >
-                {loading ? 'Submitting...' : 'Submit Feedback'}
-              </NeonButton>
-            </>
-          )}
+            </div>
+          </GlassCard>
         </div>
-      </GlassCard>
+      </div>
+
+      {/* --- LIVE COMMUNITY PULSE --- */}
+      <div className="mt-20">
+        <div className="flex items-center gap-3 mb-8 border-b border-white/5 pb-4">
+          <MessageSquare className="text-cyan-400" size={20} />
+          <h3 className="text-xl font-bold text-white uppercase italic tracking-tighter">Community Pulse</h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {feed.map((item) => (
+            <GlassCard key={item.id} className="p-6 border-white/5 bg-white/[0.01]" hover3d>
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center border ${item.name === 'You' ? 'border-cyan-500 bg-cyan-500/20' : 'border-white/10 bg-white/5'}`}>
+                    <UserCircle size={18} className={item.name === 'You' ? 'text-cyan-400' : 'text-gray-500'} />
+                  </div>
+                  <div>
+                    <p className={`text-xs font-bold ${item.name === 'You' ? 'text-cyan-400' : 'text-white'}`}>{item.name}</p>
+                    <p className="text-[8px] text-gray-600 font-bold uppercase tracking-widest">{item.event}</p>
+                  </div>
+                </div>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={8} className={i < item.rating ? "fill-cyan-400 text-cyan-400" : "text-gray-800"} />
+                  ))}
+                </div>
+              </div>
+              <p className="text-gray-400 text-[11px] leading-relaxed italic line-clamp-3">"{item.comment}"</p>
+              <div className="mt-4 pt-4 border-t border-white/5 flex justify-between items-center">
+                <span className="text-[8px] font-mono text-gray-700 uppercase tracking-tighter">{item.date}</span>
+                {item.name === 'You' && <span className="text-[8px] text-cyan-500 font-bold uppercase animate-pulse">Live Entry</span>}
+              </div>
+            </GlassCard>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

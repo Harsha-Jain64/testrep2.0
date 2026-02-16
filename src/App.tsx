@@ -12,8 +12,10 @@ import { SocialLinksHub } from './components/social/SocialLinksHub';
 import { Leaderboard } from './components/gamification/Leaderboard';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { AIAssistant } from './components/ai/AIAssistant';
+import NeuralArcade from './components/gamification/NeuralArcade';
 
 function AppContent() {
+  // Defaulting to 'home' so users see the landing page first
   const [currentView, setCurrentView] = useState('home');
 
   const renderView = () => {
@@ -36,6 +38,9 @@ function AppContent() {
         return <Leaderboard />;
       case 'dashboard':
         return <Dashboard />;
+      case 'game':
+        // We pass setCurrentView so the game can have a "Back to Home" button
+        return <NeuralArcade onBack={() => setCurrentView('home')} />; 
       default:
         return <Home onNavigate={setCurrentView} />;
     }
@@ -44,10 +49,14 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-black text-white relative overflow-x-hidden">
       <FloatingParticles />
+      
+      {/* The Sidebar/Navbar now also knows the current view */}
       <Navigation currentView={currentView} onViewChange={setCurrentView} />
+      
       <div className="relative z-10 ml-0 lg:ml-20 pt-8">
         {renderView()}
       </div>
+      
       <AIAssistant />
     </div>
   );
