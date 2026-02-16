@@ -3,86 +3,52 @@
 <div align="center">
 
 <p align="center">
-  <img src="https://avatars.githubusercontent.com/u/111989363?v=4" alt="JanSetu Logo" width="150"/>
+  <img src="https://avatars.githubusercontent.com/u/111989363?v=4" alt="IEEE-IGDTUW logo" width="150"/>
 </p>
 
 
 
 **PROJECT LINKS**
 
-[Live Demo](https://hanya98.github.io/JanSetu) &nbsp;&nbsp;&nbsp;
-[DOCS Link](https://www.canva.com/design/DAG83rtJ7fY/7gVoMR7m93kUCM_VQwpM9w/edit?utm_content=DAG83rtJ7fY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton) &nbsp;&nbsp;&nbsp;
-[Video Link](https://www.canva.com/design/DAG9dLakXXM/bP0D7hTZ2SJtQWsK2A-B5Q/edit?utm_content=DAG9dLakXXM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+[Live Demo]() &nbsp;&nbsp;&nbsp;
+[DOCS Link]() &nbsp;&nbsp;&nbsp;
+[Video Link]()
 
 </div>
 
-## JanSetu – Unified Digital Governance Platform
-JanSetu is a role-based digital governance platform designed to bridge the gap between citizens and policymakers by transforming civic interactions into actionable governance intelligence.
-It enables transparent issue resolution, informed citizen participation, and data-driven public decision-making.
+## 🚀 IEEE IGDTUW – Developer Corner: Unified Technical Ecosystem
+IEEE IGDTUW – Developer Corner is a role-based digital engagement platform designed to bridge the gap between student developers and professional technical excellence by transforming passive learning into actionable community intelligence.
+
+It enables seamless recruitment workflows, gamified skill acquisition, and data-driven engagement, serving as the central hub for the next generation in technology.
 
 
 ## 📖 Overview
 
-Current grievance systems are reactive and closure-oriented. They collect complaints but fail to extract insights, detect recurring failures, or counter misinformation effectively.
-
-JanSetu goes beyond complaint logging. It acts as a governance intelligence layer that connects:
-
-Citizens (awareness, trust, participation)
-
-Policymakers (insights, analytics, accountability)
-
-Field workforce (monitoring and optimization)
+IEEE IGDTUW - Developer Corner is a centralized, high-performance mobile app designed to redefine how students interact with the IEEE IGDTUW chapter. Built with a futuristic aesthetic, the application serves as a bridge between professional IEEE resources and student engagement.
 
 ## ✨ Features
 
-## 👤 Citizen Features
+## 🚀 Core Features
 
--   **Smart Complaint Registration & Tracking:** Auto-categorization, duplicate detection, priority escalation, real-time tracking.
--   **Community Civic Forum:** AI-based issue clustering, urgency scoring, and sentiment analysis at locality level.
--   **Rumour Verifier & Misinformation Filtering:** AI-driven credibility checks and verified explanations.
--   **Verified News Feed:** Official, locality-specific government updates.
--   **Personalized Dashboard:** A user-centric dashboard providing an overview of personal complaints, community activities, and relevant information.
--   **Policies & Schemes Awareness Hub** Personalized discovery, eligibility hints, and fake-scheme detection.
--   **Multilingual & Inclusive Access** 
+-   **Event Hub**: Integrated portal for real-time announcements and seamless registration workflows for upcoming workshops and hackathons.
+-   **Recruitment Engine**: A streamlined, interactive application form designed to capture talent across technical and creative wings.
+-   **Past Event Gallery**: A visual archive showcasing previous milestones, guest speakers, and community impact.
+-   **IEEE Membership & Benefits**: A dedicated section highlighting global perks, including research access, networking, and career resources.
+-   **Dynamic Feedback System**: A star-rated review module for data-driven insights into user experience and event quality.
+-   **Social Connectivity**: One-touch access to the community’s professional circles via integrated Social Links.
 
-## 🏛️ Policymaker Features
+## 💎 Unique Selling Points (USP)
 
--   **Complaint Insights Dashboard:** Root-cause analysis, trend detection, seasonal patterns, and cost-of-inaction insights.
--   **Policy Impact & Outreach Analytics:** Measure scheme reach, effectiveness, and gaps.
--   **Inter-Department Coordination Tools:** 
--   **Misinformation Monitoring & Control** 
--   **GeoMint Dashboard (Workforce Monitoring):** Verified check-ins, out-of-zone alerts, active workers, trust index, attendance and payroll insights.
--   **Digital Employee Service Book (Key USP)** 
+-   **Dedicated AI Chatbot**: A sophisticated digital concierge providing instant, context-aware answers to membership and technical queries.
+-   **Curated Tech Feed**: A high-velocity stream of global technology trends and chapter updates to keep developers ahead of the curve.
+-   **Tech-Oriented Gamification**: Specialized Daily & Weekly Challenges that transform technical learning into a competitive experience.
+-   **Elite Leaderboard**: A merit-based tracking system where top performers earn social media shoutouts and exclusive access to premium sessions.
 
 
 ## 🌍 Vision
 
-To establish JanSetu as a national-scale governance intelligence platform that enables proactive, transparent, and citizen-centric public administration.
+Our vision is to evolve the IEEE IGDTUW digital presence from a static information portal into a self-sustaining technical ecosystem.
 
-
-## 🖥️ Screenshots
-
-<p align="center">
-  <img src="assets/HomePage.png" width="800"/>
-  <br/>
-  <i>Homepage</i>
-</p>
-
-<br>
-
-<p align="center">
-  <img src="assets/ Citizen_Dash.png" width="800"/>
-  <br/>
-  <i>Citizen Dashboard – personalized alerts, complaints, and community engagement</i>
-</p>
-
-<br>
-
-<p align="center">
-  <img src="assets/PolicyMaker_Dash.png" width="800"/>
-  <br/>
-  <i>Policymaker Dashboard – complaint analytics, policy insights, and workforce monitoring</i>
-</p>
 
 ## 🛠️ Tech Stack
 
@@ -107,124 +73,29 @@ To establish JanSetu as a national-scale governance intelligence platform that e
 -   ![Nodemon](https://img.shields.io/badge/Nodemon-76D04B?style=for-the-badge&logo=nodemon&logoColor=white)
 
 
-
-## 📁 Project Structure
-
-```
-JanSetu/
-├── .env.example        # Example environment variables
-├── .gitignore          # Files/folders ignored by Git
-├── bg.jpeg             # Background image asset
-├── community.html      # Community discussion page
-├── complaint.html      # Complaint submission page
-├── dashboard.html      # User dashboard page
-├── geomint.html        # Geospatial information/minting page
-├── index.html          # Main landing page
-├── jansetu.jpeg        # Project specific image asset
-├── logo.jpeg           # Project logo
-├── my_complaints.html  # Page to view user's complaints
-├── package-lock.json   # npm dependency lock file
-├── package.json        # Project metadata and dependencies
-├── policy.html         # Policy information page
-├── rumour_detector.html# Rumor detection tool page
-├── rumours.html        # Rumors listing page
-├── server.js           # Main Node.js backend application
-├── server.js.backup    # Backup of server.js (can be safely removed)
-└── user.html           # User profile page
-```
-
-## ⚙️ Configuration
-
-### Environment Variables
-Configure these variables in your `.env` file to customize the application's behavior.
-
-| Variable       | Description                                  | Default      | Required |
-|----------------|----------------------------------------------|--------------|----------|
-| `PORT`         | Port number for the Express server.          | `3000`       | Yes      |
-| `MONGODB_URI`  | Connection string for your MongoDB database. | `(localhost)`| Yes      |
-| `JWT_SECRET`   | Secret key for signing and verifying JWTs.   | `(none)`     | Yes      |
-
-### Configuration Files
--   **`.env`**: Stores sensitive configuration details and environment-specific settings.
--   **`package.json`**: Manages project dependencies and scripts.
-
-## 🔧 Development
-
-### Available Scripts
-In the project directory, you can run:
-
-| Command           | Description                                                        |
-|-------------------|--------------------------------------------------------------------|
-| `npm start`       | Starts the Node.js server in production mode.                      |
-| `npm run dev`     | Starts the Node.js server in development mode using `nodemon`.     |
-| `npm test`        | Placeholder for running tests. Currently outputs an error message. |
-
-### Development Workflow
-For active development, use `npm run dev`. Any changes saved in `server.js` or related backend files will automatically restart the server, reflecting your updates instantly.
-
-## 🧪 Testing
-
-The `package.json` includes a `test` script, but it's currently a placeholder.
-```bash
-# Run tests (currently a placeholder)
-npm test
-```
-To implement testing, you would typically integrate a testing framework like Jest or Mocha.
-
-## 🚀 Deployment
-
-### Production Build
-To prepare the application for production:
-```bash
-
-```
-It is recommended to use a process manager like PM2 or deploy on platforms like Heroku, Vercel (for frontend if separated), or a custom VPS with Nginx for reverse proxying for robust production deployment.
-
-## 📚 API Reference
-
-JanSetu's backend provides the following key API endpoints:
-
-### Authentication
-User authentication is handled via JWT. Upon successful login, a JWT is issued and stored as a cookie. All protected routes require a valid JWT.
-
-### Endpoints
-
-| Method | Endpoint              | Description                                  | Authentication Required |
-|:-------|:----------------------|:---------------------------------------------|:------------------------|
-| `GET`  | `/`                   | Serves the main landing page (`index.html`). | No                      |
-| `GET`  | `/dashboard`          | Serves the user dashboard.                   | Yes                     |
-| `GET`  | `/community`          | Serves the community page.                   | Yes                     |
-| `GET`  | `/complaint`          | Serves the complaint submission page.        | Yes                     |
-| `GET`  | `/my_complaints`      | Serves the page to view user's complaints.   | Yes                     |
-| `GET`  | `/policy`             | Serves the policy information page.          | Yes                     |
-| `GET`  | `/rumour_detector`    | Serves the rumor detection tool page.        | Yes                     |
-| `GET`  | `/rumours`            | Serves the rumors listing page.              | Yes                     |
-| `GET`  | `/geomint`            | Serves the geospatial minting page.          | Yes                     |
-| `GET`  | `/user`               | Serves the user profile page.                | Yes                     |
-| `POST` | `/register`           | Registers a new user account.                | No                      |
-| `POST` | `/login`              | Authenticates a user and issues a JWT.       | No                      |
-| `POST` | `/submit-complaint`   | Submits a new complaint.                     | Yes                     |
-| `GET`  | `/logout`             | Clears the JWT cookie and logs out the user. | Yes (to clear cookie)   |
-
 ## 🤝 Contributing
 
-We welcome contributions to JanSetu! If you have suggestions for improvements or want to report a bug, please open an issue or submit a pull request.
+We welcome contributions to IEEE-IGDTUW ! If you have suggestions for improvements or want to report a bug, please open an issue or submit a pull request.
 
 
 ## 🙏 Acknowledgments
 
--   **Express.js**: For providing a robust web framework.
--   **Mongoose**: For elegant MongoDB object modeling.
--   **EJS**: For simple and effective server-side templating.
--   **Dotenv**: For seamless environment variable management.
--   **Bcrypt.js**: For secure password hashing.
--   **JSON Web Token**: For secure authentication.
--   **Nodemon**: For boosting development workflow.
+We express our sincere gratitude to the individuals and organizations that provided the foundation and inspiration for this platform:
+
+- IEEE IGDTUW: For providing the platform and community to foster technical innovation among women in engineering.
+
+- IGDTUW (Indira Gandhi Delhi Technical University for Women): For the constant support in promoting a "Build-First" culture.
+
+- The Open Source Community: For the incredible tools—React, Tailwind CSS, and Lucide React—that power this application.
+
+- Project Mentors & Seniors: To the seniors and leads who provided the initial vision for the "Developer Corner" and guided the architectural decisions.
+
+- AI for Development: Recognition to Google’s Gemini 3 Flash for its role in optimizing UI/UX logic and accelerating the development workflow.
 
 <div align="center">
 
 **⭐ Star this repo if you find it helpful!**
 
-Made with ❤️ by SeedtoScale
+Made with ❤️ by Pairadox
 
-</div>testrep
+</div>
