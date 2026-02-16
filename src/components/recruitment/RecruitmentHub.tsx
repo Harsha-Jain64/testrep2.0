@@ -1,328 +1,173 @@
 import { useState } from 'react';
-import { Users, Code, Palette, Megaphone, Settings, CheckCircle } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
-import { useAuth } from '../../contexts/AuthContext';
+import { 
+  Users, Code, Palette, Megaphone, Settings, Star, ExternalLink, 
+  ShieldCheck, Zap, Globe, Award, Rocket, Plus, Minus, Target, Clock, Heart
+} from 'lucide-react';
 import { GlassCard } from '../ui/GlassCard';
-import { NeonButton } from '../ui/NeonButton';
 import { GradientText } from '../ui/GradientText';
 
-interface RecruitmentFormData {
-  role: string;
-  domain: string;
-  why_join: string;
-  experience: string;
-  skills: string[];
-  portfolio_link: string;
-  availability: string;
-}
+const GOOGLE_FORM_LINKS = {
+  core: "https://forms.google.com/your-core-team-form",
+  member: "https://forms.google.com/your-member-form"
+};
+
+const FAQ_ITEMS = [
+  { q: "Can I apply for multiple domains?", a: "Yes, you can specify your interests in the form, but you will be recruited for one primary domain based on your performance." },
+  { q: "What is the selection process?", a: "The journey consists of Form Screening -> Domain Task Phase -> Personal Interview." },
+  { q: "Do I need prior experience?", a: "For Member roles, we prioritize passion and consistency. For Core roles, prior leadership or domain expertise is preferred." },
+];
 
 export function RecruitmentHub() {
-  const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<RecruitmentFormData>({
-    role: '',
-    domain: '',
-    why_join: '',
-    experience: '',
-    skills: [],
-    portfolio_link: '',
-    availability: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const { user } = useAuth();
-
-  const roles = [
-    { id: 'core_team', name: 'Core Team', icon: Users, requirements: 'Leadership experience, 3rd/4th year' },
-    { id: 'associate', name: 'Associate', icon: Users, requirements: '2nd/3rd year, active participation' },
-    { id: 'coordinator', name: 'Coordinator', icon: Settings, requirements: '1st/2nd year, enthusiasm to learn' },
-  ];
-
-  const domains = [
-    { id: 'technical', name: 'Technical', icon: Code, color: 'blue' },
-    { id: 'design', name: 'Design', icon: Palette, color: 'purple' },
-    { id: 'content', name: 'Content', icon: Megaphone, color: 'violet' },
-    { id: 'management', name: 'Management', icon: Settings, color: 'pink' },
-  ];
-
-  const skillOptions = {
-    technical: ['Web Development', 'App Development', 'AI/ML', 'IoT', 'Blockchain', 'Cloud Computing'],
-    design: ['UI/UX Design', 'Graphic Design', 'Video Editing', 'Animation', '3D Modeling'],
-    content: ['Content Writing', 'Social Media', 'Public Speaking', 'Event Coverage', 'Photography'],
-    management: ['Event Planning', 'Team Management', 'Sponsorship', 'Public Relations', 'Finance'],
-  };
-
-  const totalSteps = 4;
-  const progress = (step / totalSteps) * 100;
-
-  const handleSubmit = async () => {
-    if (!user) return;
-
-    setLoading(true);
-    try {
-      const { error } = await supabase
-        .from('recruitment_applications')
-        .insert({
-          user_id: user.id,
-          role: formData.role,
-          domain: formData.domain,
-          application_data: formData,
-        });
-
-      if (!error) {
-        setSubmitted(true);
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleSkill = (skill: string) => {
-    setFormData(prev => ({
-      ...prev,
-      skills: prev.skills.includes(skill)
-        ? prev.skills.filter(s => s !== skill)
-        : [...prev.skills, skill],
-    }));
-  };
-
-  if (!user) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <GlassCard className="p-12 text-center max-w-2xl mx-auto">
-          <GradientText className="text-3xl mb-4">Join Our Team</GradientText>
-          <p className="text-gray-400 mb-6">Please sign in to apply for recruitment</p>
-        </GlassCard>
-      </div>
-    );
-  }
-
-  if (submitted) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <GlassCard className="p-12 text-center max-w-2xl mx-auto" neonColor="blue">
-          <CheckCircle size={64} className="mx-auto text-[#00D9FF] mb-6" />
-          <GradientText className="text-3xl mb-4">Application Submitted!</GradientText>
-          <p className="text-gray-400 mb-6">
-            Thank you for your interest in joining IEEE IGDTUW. We'll review your application and get back to you soon!
-          </p>
-          <NeonButton onClick={() => window.location.reload()}>
-            Submit Another Application
-          </NeonButton>
-        </GlassCard>
-      </div>
-    );
-  }
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <div className="text-center mb-8">
-        <GradientText className="text-5xl mb-4">Join IEEE IGDTUW</GradientText>
-        <p className="text-gray-400 text-lg">Be part of something extraordinary</p>
+    <div className="container mx-auto px-4 py-16 max-w-6xl">
+      {/* --- 1. HERO SECTION --- */}
+      <div className="text-center mb-20">
+        <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-[10px] font-bold uppercase tracking-[0.4em] animate-pulse">
+          <Globe size={12} /> Global IEEE Network // 2024-25
+        </div>
+        <h1 className="text-6xl md:text-7xl font-black italic uppercase tracking-tighter text-white mb-6">
+          Level <span className="text-cyan-400">Up</span> Your <GradientText>Legacy</GradientText>
+        </h1>
+        <p className="text-gray-500 font-mono text-xs uppercase tracking-[0.3em] max-w-2xl mx-auto leading-relaxed">
+          Recruitment is now active. Choose your track and join the force.
+        </p>
       </div>
 
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-400">Step {step} of {totalSteps}</span>
-          <span className="text-sm text-[#00D9FF]">{Math.round(progress)}%</span>
-        </div>
-        <div className="h-2 bg-black/50 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-[#00D9FF] to-purple-500 transition-all duration-500 shadow-[0_0_10px_rgba(0,217,255,0.6)]"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
-
-      <GlassCard className="p-8">
-        {step === 1 && (
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Select Your Role</h2>
-            <div className="space-y-4">
-              {roles.map(role => {
-                const Icon = role.icon;
-                return (
-                  <button
-                    key={role.id}
-                    onClick={() => setFormData({ ...formData, role: role.id })}
-                    className={`
-                      w-full p-6 rounded-xl border-2 transition-all text-left
-                      ${formData.role === role.id
-                        ? 'border-[#00D9FF] bg-[#00D9FF]/10 shadow-[0_0_20px_rgba(0,217,255,0.3)]'
-                        : 'border-[#00D9FF]/30 hover:border-[#00D9FF]/50'
-                      }
-                    `}
-                  >
-                    <div className="flex items-start gap-4">
-                      <Icon size={32} className="text-[#00D9FF]" />
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-white mb-2">{role.name}</h3>
-                        <p className="text-gray-400 text-sm">{role.requirements}</p>
-                      </div>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Choose Your Domain</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {domains.map(domain => {
-                const Icon = domain.icon;
-                return (
-                  <button
-                    key={domain.id}
-                    onClick={() => setFormData({ ...formData, domain: domain.id })}
-                    className={`
-                      p-6 rounded-xl border-2 transition-all
-                      ${formData.domain === domain.id
-                        ? 'border-[#00D9FF] bg-[#00D9FF]/10 shadow-[0_0_20px_rgba(0,217,255,0.3)]'
-                        : 'border-[#00D9FF]/30 hover:border-[#00D9FF]/50'
-                      }
-                    `}
-                  >
-                    <Icon size={48} className="text-[#00D9FF] mb-4 mx-auto" />
-                    <h3 className="text-xl font-bold text-white text-center">{domain.name}</h3>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {step === 3 && (
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Your Skills</h2>
-            <div className="space-y-6">
+      {/* --- 2. DUAL TRACK CARDS (HIGH POP) --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-24">
+        
+        {/* CORE TEAM (BLUE/CYAN) */}
+        <GlassCard className="p-10 border-cyan-500/30 relative overflow-hidden group" neonColor="blue" hover3d>
+          <div className="relative z-10 flex flex-col h-full">
+            <div className="flex justify-between items-start mb-8">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-3">
-                  Select your skills (multiple selection allowed)
-                </label>
-                <div className="flex flex-wrap gap-3">
-                  {(formData.domain && skillOptions[formData.domain as keyof typeof skillOptions] || []).map(skill => (
-                    <button
-                      key={skill}
-                      type="button"
-                      onClick={() => toggleSkill(skill)}
-                      className={`
-                        px-4 py-2 rounded-lg transition-all font-semibold
-                        ${formData.skills.includes(skill)
-                          ? 'bg-[#00D9FF] text-black shadow-[0_0_10px_rgba(0,217,255,0.5)]'
-                          : 'bg-black/50 text-gray-400 border border-[#00D9FF]/30'
-                        }
-                      `}
-                    >
-                      {skill}
-                    </button>
-                  ))}
+                <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter">Core Team</h2>
+                <p className="text-cyan-400 font-mono text-[10px] uppercase tracking-widest mt-1">Leadership Track</p>
+              </div>
+              <ShieldCheck size={44} className="text-cyan-500 opacity-60 group-hover:scale-110 transition-transform" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-10">
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Eligibility</p>
+                <p className="text-xs text-white font-bold">3rd & 4th Year</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Weekly Commitment</p>
+                <p className="text-xs text-white font-bold">8-12 Hours</p>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-12">
+              <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Expectations</h4>
+              {['Strategic Decision Making', 'Managing Domain Logistics', 'Mentorship & Leadership'].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
+                  <div className="w-1.5 h-1.5 bg-cyan-500 rounded-full shadow-[0_0_8px_cyan]" />
+                  {item}
                 </div>
-              </div>
+              ))}
+            </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Experience & Projects
-                </label>
-                <textarea
-                  value={formData.experience}
-                  onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
-                  rows={4}
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                  placeholder="Tell us about your experience and projects..."
-                />
-              </div>
+            <a href={GOOGLE_FORM_LINKS.core} target="_blank" className="mt-auto w-full py-5 bg-cyan-500 text-black font-black uppercase text-xs tracking-widest rounded-xl hover:bg-cyan-400 transition-all text-center shadow-[0_0_30px_rgba(34,211,238,0.3)]">
+              Dispatch Core Application
+            </a>
+          </div>
+        </GlassCard>
 
+        {/* MEMBERS (PINK/VIOLET POP) */}
+        <GlassCard className="p-10 border-pink-500/30 relative overflow-hidden group" neonColor="pink" hover3d>
+          <div className="relative z-10 flex flex-col h-full">
+            <div className="flex justify-between items-start mb-8">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Portfolio / GitHub Link
-                </label>
-                <input
-                  type="url"
-                  value={formData.portfolio_link}
-                  onChange={(e) => setFormData({ ...formData, portfolio_link: e.target.value })}
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                  placeholder="https://..."
-                />
+                <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter">Members</h2>
+                <p className="text-pink-500 font-mono text-[10px] uppercase tracking-widest mt-1">Growth Track</p>
+              </div>
+              <Zap size={44} className="text-pink-500 opacity-60 group-hover:scale-110 transition-transform" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 mb-10">
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Eligibility</p>
+                <p className="text-xs text-white font-bold">1st, 2nd, 3rd Year</p>
+              </div>
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                <p className="text-[9px] text-gray-500 uppercase font-black mb-1">Weekly Commitment</p>
+                <p className="text-xs text-white font-bold">4-6 Hours</p>
               </div>
             </div>
-          </div>
-        )}
 
-        {step === 4 && (
-          <div>
-            <h2 className="text-2xl font-bold text-white mb-6">Final Details</h2>
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Why do you want to join IEEE IGDTUW?
-                </label>
-                <textarea
-                  value={formData.why_join}
-                  onChange={(e) => setFormData({ ...formData, why_join: e.target.value })}
-                  rows={4}
-                  required
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                  placeholder="Share your motivation..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Availability (hours per week)
-                </label>
-                <select
-                  value={formData.availability}
-                  onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                  required
-                  className="w-full px-4 py-3 bg-black/50 border border-[#00D9FF]/30 rounded-lg text-white focus:outline-none focus:border-[#00D9FF] transition-colors"
-                >
-                  <option value="">Select availability</option>
-                  <option value="5-10">5-10 hours/week</option>
-                  <option value="10-15">10-15 hours/week</option>
-                  <option value="15+">15+ hours/week</option>
-                </select>
-              </div>
+            <div className="space-y-4 mb-12">
+              <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Expectations</h4>
+              {['Technical/Design Contribution', 'Event Execution Support', 'Active Participation'].map((item, i) => (
+                <div key={i} className="flex items-center gap-3 text-sm text-gray-300">
+                  <div className="w-1.5 h-1.5 bg-pink-500 rounded-full shadow-[0_0_8px_#ec4899]" />
+                  {item}
+                </div>
+              ))}
             </div>
-          </div>
-        )}
 
-        <div className="flex gap-4 mt-8">
-          {step > 1 && (
-            <NeonButton
-              variant="outline"
-              onClick={() => setStep(step - 1)}
-              className="flex-1"
-            >
-              Previous
-            </NeonButton>
-          )}
-          {step < totalSteps ? (
-            <NeonButton
-              onClick={() => setStep(step + 1)}
-              disabled={
-                (step === 1 && !formData.role) ||
-                (step === 2 && !formData.domain) ||
-                (step === 3 && formData.skills.length === 0)
-              }
-              className="flex-1"
-            >
-              Next
-            </NeonButton>
-          ) : (
-            <NeonButton
-              onClick={handleSubmit}
-              disabled={loading || !formData.why_join || !formData.availability}
-              className="flex-1"
-            >
-              {loading ? 'Submitting...' : 'Submit Application'}
-            </NeonButton>
-          )}
+            <a href={GOOGLE_FORM_LINKS.member} target="_blank" className="mt-auto w-full py-5 bg-gradient-to-r from-pink-600 to-purple-600 text-white font-black uppercase text-xs tracking-widest rounded-xl hover:opacity-90 transition-all text-center shadow-[0_0_30px_rgba(236,72,153,0.3)]">
+              Dispatch Member Application
+            </a>
+          </div>
+        </GlassCard>
+      </div>
+
+      {/* --- 3. DOMAINS AT A GLANCE (RESTORED) --- */}
+      <div className="mb-32">
+        <h3 className="text-center text-[10px] font-black text-gray-500 uppercase tracking-[0.5em] mb-12">Deployment Domains</h3>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: Code, name: 'Technical', desc: 'Dev, AI/ML, Cloud' },
+            { icon: Palette, name: 'Design', desc: 'UI/UX, Graphics' },
+            { icon: Megaphone, name: 'Content', desc: 'PR, Writing' },
+            { icon: Settings, name: 'Management', desc: 'Ops & Events' }
+          ].map((domain, i) => (
+            <div key={i} className="p-6 rounded-2xl bg-white/[0.01] border border-white/5 hover:border-white/10 transition-colors text-center group">
+              <domain.icon className="mx-auto mb-4 text-gray-700 group-hover:text-white transition-colors" size={28} />
+              <h4 className="text-white text-sm font-bold uppercase italic tracking-tighter mb-1">{domain.name}</h4>
+              <p className="text-[10px] text-gray-600 font-mono uppercase">{domain.desc}</p>
+            </div>
+          ))}
         </div>
-      </GlassCard>
+      </div>
+
+      {/* --- 4. PERKS SECTION (RESTORED) --- */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
+        {[
+          { icon: Award, title: "Official Certification", desc: "Recognized IEEE Global credentials." },
+          { icon: Heart, title: "Vibrant Community", desc: "Join 100+ passionate tech enthusiasts." },
+          { icon: Rocket, title: "Career Boost", desc: "Hands-on experience that shines on resumes." },
+        ].map((perk, i) => (
+          <div key={i} className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 text-center">
+            <perk.icon className="mx-auto mb-4 text-cyan-400" size={32} />
+            <h4 className="text-white font-bold uppercase text-xs tracking-widest mb-2">{perk.title}</h4>
+            <p className="text-gray-500 text-[11px] leading-relaxed italic">{perk.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* --- 5. FAQ (RESTORED & REFINED) --- */}
+      <div className="max-w-3xl mx-auto">
+        <h3 className="text-center text-xl font-black italic text-white uppercase tracking-tighter mb-8">FAQ / <span className="text-pink-500">Guidelines</span></h3>
+        <div className="space-y-3">
+          {FAQ_ITEMS.map((faq, i) => (
+            <div key={i} className="bg-black/40 border border-white/5 rounded-xl overflow-hidden">
+              <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full p-5 flex justify-between items-center text-left">
+                <span className="text-xs font-bold uppercase tracking-widest text-gray-300">{faq.q}</span>
+                {openFaq === i ? <Minus size={14} className="text-pink-500" /> : <Plus size={14} className="text-gray-600" />}
+              </button>
+              {openFaq === i && (
+                <div className="px-5 pb-5 text-gray-500 text-xs leading-relaxed animate-in fade-in slide-in-from-top-1">
+                  {faq.a}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
